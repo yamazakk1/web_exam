@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Написать рецензию на книгу "{{ book.title }}"</h1>
+
+<form method="POST">
+    <div class="mb-3">
+        <label for="rating" class="form-label">Оценка</label>
+        <select class="form-select" id="rating" name="rating" required>
+            <option value="5">5 – отлично</option>
+            <option value="4">4 – хорошо</option>
+            <option value="3">3 – удовлетворительно</option>
+            <option value="2">2 – неудовлетворительно</option>
+            <option value="1">1 – плохо</option>
+            <option value="0">0 – ужасно</option>
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label for="text" class="form-label">Текст рецензии (поддерживается Markdown)</label>
+        <textarea class="form-control" id="text" name="text" rows="10">{{ form_data.text if form_data else '' }}</textarea>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{{ url_for('book_view', book_id=book.id) }}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const easyMDE = new EasyMDE({
+            element: document.getElementById('text'),
+            spellChecker: false,
+            status: false
+        });
+    });
+</script>
+{% endblock %}

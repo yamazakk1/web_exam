@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-4">
+        {% if book.cover %}
+        <img src="{{ url_for('static', filename='covers/' + book.cover.filename) }}" class="img-fluid rounded shadow" alt="Обложка книги">
+        {% else %}
+        <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded" style="height: 300px;">
+            <span>Нет обложки</span>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-md-8">
+        <h1>{{ book.title }}</h1>
+        <table class="table">
+            <tr>
+                <th>Автор</th>
+                <td>{{ book.author }}</td>
+            </tr>
+            <tr>
+                <th>Год издания</th>
+                <td>{{ book.year }}</td>
+            </tr>
+            <tr>
+                <th>Издательство</th>
+                <td>{{ book.publisher }}</td>
+            </tr>
+            <tr>
+                <th>Объём (страниц)</th>
+                <td>{{ book.pages }}</td>
+            </tr>
+            <tr>
+                <th>Жанры</th>
+                <td>
+                    {% for genre in book.genres %}
+                        <span class="badge bg-secondary me-1">{{ genre.name }}</span>
+                    {% endfor %}
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h3>Описание</h3>
+        <div class="border rounded p-3 bg-light">
+            {{ description_html | safe }}
+        </div>
+    </div>
+</div>
+
+<hr class="my-4">
+
+<div class="row">
+    <div class="col-12">
+        <h2>Рецензии</h2>
+        
+        {% if current_user.is_authenticated %}
+            {% if user_review %}
+                <div class="alert alert-info">
+                    <h5>Ваша рецензия</h5>
+                    <p><strong>Оценка:</strong> {{ user_review.rating }}/5</p>
+                    <p><strong>Статус:</strong> {{ user_review.status.name }}</p>
+                    <div class="border rounded p-2 bg-white">
+                        {{ user_review.text | safe }}
+                    </div>
+                </div>
+            {% else %}
+                <div class="mb-3">
+                    <a href="{{ url_for('review_create', book_id=book.id) }}" class="btn btn-primary">Написать рецензию</a>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-secondary">
+                <a href="{{ url_for('login') }}">Войдите</a>, чтобы оставить рецензию.
+            </div>
+        {% endif %}
+        
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0">{{ review.user.get_full_name() }}</h5>
+                        <span class="badge bg-primary fs-6">{{ review.rating }}/5</span>
+                    </div>
+                    <div class="border rounded p-2 bg-white">
+                        {{ review.text | markdown | safe }}
+                    </div>
+                    <small class="text-muted">{{ review.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-light">
+                <p class="mb-0">Пока нет одобренных рецензий на эту книгу. Будьте первым!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

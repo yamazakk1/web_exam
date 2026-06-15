@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Рассмотрение рецензии</h1>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Рецензия на книгу "{{ review.book.title }}"</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Пользователь:</strong> {{ review.user.get_full_name() }}</p>
+        <p><strong>Оценка:</strong> {{ review.rating }}/5</p>
+        <p><strong>Дата:</strong> {{ review.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+        
+        <h5>Текст рецензии:</h5>
+        <div class="border rounded p-3 bg-light">
+            {{ review_text_html | safe }}
+        </div>
+    </div>
+    <div class="card-footer">
+        <form method="POST" class="d-inline">
+            <button type="submit" name="action" value="approve" class="btn btn-success">Одобрить</button>
+            <button type="submit" name="action" value="reject" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите отклонить и удалить эту рецензию?')">Отклонить и удалить</button>
+        </form>
+        <a href="{{ url_for('moderation') }}" class="btn btn-secondary">Назад</a>
+    </div>
+</div>
+{% endblock %}

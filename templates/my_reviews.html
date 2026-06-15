@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Мои рецензии</h1>
+
+{% if reviews %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Книга</th>
+                    <th>Оценка</th>
+                    <th>Статус</th>
+                    <th>Дата</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                    <td>{{ review.book.title }}</td>
+                    <td>{{ review.rating }}/5</td>
+                    <td>
+                        <span class="badge {% if review.status.name == 'Одобрена' %}bg-success{% elif review.status.name == 'Отклонена' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                            {{ review.status.name }}
+                        </span>
+                    </td>
+                    <td>{{ review.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                    <td>
+                        <a href="{{ url_for('book_view', book_id=review.book_id) }}" class="btn btn-sm btn-info">Просмотр книги</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        <p class="mb-0">У вас пока нет рецензий. <a href="{{ url_for('index') }}">Перейти к каталогу книг</a></p>
+    </div>
+{% endif %}
+{% endblock %}
