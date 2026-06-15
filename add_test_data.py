@@ -1,12 +1,10 @@
 from app import app, db
-from models import User, Book, Genre, Cover, Review, ReviewStatus, Role
-from werkzeug.security import generate_password_hash
-from datetime import datetime
+from models import User, Book, Genre, Review, ReviewStatus
 
 def add_test_data():
     with app.app_context():
         if Book.query.first():
-            print("База данных уже содержит книги")
+            print("Тестовые данные уже существуют")
             return
 
         genres = Genre.query.all()
@@ -15,7 +13,7 @@ def add_test_data():
             {
                 'title': 'Мастер и Маргарита',
                 'description': '''# Мастер и Маргарита
-                
+
 Великий роман Михаила Булгакова, который стал классикой мировой литературы.
 
 ## Сюжет
@@ -34,7 +32,7 @@ def add_test_data():
             {
                 'title': 'Преступление и наказание',
                 'description': '''# Преступление и наказание
-                
+
 Роман Фёдора Достоевского, впервые опубликованный в 1866 году.
 
 ## Главный герой
@@ -53,7 +51,7 @@ def add_test_data():
             {
                 'title': '1984',
                 'description': '''# 1984
-                
+
 Антиутопический роман Джорджа Оруэлла.
 
 ## Мир будущего
@@ -92,7 +90,7 @@ def add_test_data():
         approved_status = ReviewStatus.query.filter_by(name='Одобрена').first()
         
         if user and approved_status:
-            review1 = Review(
+            review = Review(
                 book_id=1,
                 user_id=user.id,
                 rating=5,
@@ -103,23 +101,12 @@ def add_test_data():
 **Рекомендую всем!**''',
                 status_id=approved_status.id
             )
-            db.session.add(review1)
-
-            review2 = Review(
-                book_id=2,
-                user_id=user.id,
-                rating=4,
-                text='''Хорошая книга, но немного затянута.
-
-Философские размышления интересные.''',
-                status_id=approved_status.id
-            )
-            db.session.add(review2)
+            db.session.add(review)
         
         db.session.commit()
-        print("Тестовые данные успешно добавлены")
-        print("Создано книг:", Book.query.count())
-        print("Создано рецензий:", Review.query.count())
+        print("Тестовые данные добавлены!")
+        print(f"Книг создано: {Book.query.count()}")
+        print(f"Рецензий создано: {Review.query.count()}")
 
 if __name__ == '__main__':
     add_test_data()

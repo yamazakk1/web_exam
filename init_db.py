@@ -4,10 +4,8 @@ from werkzeug.security import generate_password_hash
 
 def init_database():
     with app.app_context():
-        # Создаём таблицы
         db.create_all()
         
-        # Добавляем роли
         roles_data = [
             {'name': 'администратор', 'description': 'суперпользователь, имеет полный доступ к системе, в том числе к созданию и удалению книг'},
             {'name': 'модератор', 'description': 'может редактировать данные книг и производить модерацию рецензий'},
@@ -19,8 +17,7 @@ def init_database():
                 role = Role(**role_data)
                 db.session.add(role)
                 print(f"Роль '{role_data['name']}' создана")
-        
-        # Добавляем жанры
+
         genres_data = [
             'Фантастика', 'Фэнтези', 'Детектив', 'Роман', 
             'Научная литература', 'История', 'Поэзия', 
@@ -33,7 +30,6 @@ def init_database():
                 db.session.add(genre)
                 print(f"Жанр '{genre_name}' создан")
         
-        # Добавляем статусы рецензий
         statuses_data = ['На рассмотрении', 'Одобрена']
         for status_name in statuses_data:
             if not ReviewStatus.query.filter_by(name=status_name).first():
@@ -43,7 +39,6 @@ def init_database():
         
         db.session.commit()
         
-        # Создаём тестовых пользователей
         if not User.query.filter_by(login='admin').first():
             admin_role = Role.query.filter_by(name='администратор').first()
             admin = User(
